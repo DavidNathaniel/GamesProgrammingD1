@@ -6,6 +6,7 @@ public class RestartBarrier : MonoBehaviour
     public Transform parentPlayer;
     public RaceManager raceManager;
     public PlayerMovementRB pm;
+    public PlayerCamerafps mainCamera;
     /*public Transform player;
     public Transform cameraDirection;
     public Transform cameraPostion;
@@ -20,7 +21,6 @@ public class RestartBarrier : MonoBehaviour
         {
             // Reset the player's position to the respawn point
             parentPlayer.position = respawnPoint.position;
-            //mainCameraPosition.position = respawnPoint.position;
 
             // Reset the player's velocity
             Rigidbody playerRigidbody = parentPlayer.GetComponent<Rigidbody>();
@@ -32,6 +32,12 @@ public class RestartBarrier : MonoBehaviour
                 //also set player's movespeed to 0 - resetting their wallrun speed or smth. //pm.resetWallRunSpeed //by overriding the mathf.lerp coroutine.
             }
 
+            //reset the player's orientation (doesn't work rn)
+            pm.ResetOrientation();
+            //mainCameraPosition.position = respawnPoint.position;
+            //mainCamera.rotation = Quaternion.Euler(0f, 0f, 0f); //testing
+            //mainCamera.forcedOrientation();
+
             //restart the race
             if (raceManager != null)
             {
@@ -39,7 +45,12 @@ public class RestartBarrier : MonoBehaviour
                 raceManager.ResetRace();
             }
 
-            //Restart the checkpoints for the race.
+            //reset the barrels to their original positions by finding all BarrelFormation objects
+            BarrelFormation[] barrelFormations = FindObjectsByType<BarrelFormation>(FindObjectsSortMode.None);
+            foreach (BarrelFormation formation in barrelFormations)
+            {
+                formation.ResetBarrels();
+            }
 
             Debug.Log("Player respawned at: " + respawnPoint.position);
         }
