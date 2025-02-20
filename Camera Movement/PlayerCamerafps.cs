@@ -8,8 +8,8 @@ public class PlayerCamerafps : MonoBehaviour
 
     public Transform orientation;
 
-    public float xRotation;
-    public float yRotation;
+    public float xRotation; //these are set as the default player camera orientation.
+    public float yRotation; 
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -25,15 +25,24 @@ public class PlayerCamerafps : MonoBehaviour
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * senX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * senY;
 
-        yRotation += mouseX;
         xRotation -= mouseY;
-
+        yRotation += mouseX;
+        
         xRotation = Mathf.Clamp(xRotation, -90f, 90f); //lock the camera so can only look up and down a maximum of 90 degrees.
 
-        //maybe this is where i can hardcode the direciton we want the player to be looking on each level?
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        orientation.rotation = Quaternion.Euler(0, yRotation, 0);    
+        orientation.rotation = Quaternion.Euler(0, yRotation, 0);
 
+    }
+
+    //force player to look at a specified direction
+    public void forcedOrientation(float xRot, float yRot)
+    {
+        xRotation = xRot;
+        yRotation = yRot;
+
+        //transform.rotation = Quaternion.Euler(xRot, yRot, 0);
+        //orientation.rotation = Quaternion.Euler(0, yRot, 0);
     }
 
 }

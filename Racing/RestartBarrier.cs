@@ -6,7 +6,11 @@ public class RestartBarrier : MonoBehaviour
     public Transform parentPlayer;
     public RaceManager raceManager;
     public PlayerMovementRB pm;
+
+    [Header("Camera orientation")]
     public PlayerCamerafps mainCamera;
+    public float xRotation;
+    public float yRotation;
     /*public Transform player;
     public Transform cameraDirection;
     public Transform cameraPostion;
@@ -32,11 +36,8 @@ public class RestartBarrier : MonoBehaviour
                 //also set player's movespeed to 0 - resetting their wallrun speed or smth. //pm.resetWallRunSpeed //by overriding the mathf.lerp coroutine.
             }
 
-            //reset the player's orientation (doesn't work rn)
-            pm.ResetOrientation();
-            //mainCameraPosition.position = respawnPoint.position;
-            //mainCamera.rotation = Quaternion.Euler(0f, 0f, 0f); //testing
-            //mainCamera.forcedOrientation();
+            //reset the player's orientation
+            mainCamera.forcedOrientation(xRotation, yRotation);
 
             //restart the race
             if (raceManager != null)
