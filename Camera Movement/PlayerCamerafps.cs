@@ -36,7 +36,7 @@ public class PlayerCamerafps : MonoBehaviour
     }
 
     //force player to look at a specified direction
-    public void forcedOrientation(float xRot, float yRot)
+    public void ForcedOrientation(float xRot, float yRot)
     {
         xRotation = xRot;
         yRotation = yRot;

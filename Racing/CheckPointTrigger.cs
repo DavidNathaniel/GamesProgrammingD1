@@ -3,7 +3,8 @@ using UnityEngine;
 public class CheckPointTrigger : MonoBehaviour
 {
     public RaceManager raceManager; 
-    public ParticleSystem ps; 
+    public ParticleSystem ps;
+    public AudioSource audioSource;
 
     private void Start()
     {
@@ -16,23 +17,17 @@ public class CheckPointTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) // Ensure the player has the "Player" tag
+        if (other.CompareTag("Player"))
         {
-            // Notify the RaceManager that this checkpoint has been activated
-            raceManager.ActivateCheckpoint();
-
             // Stop the particle system
             if (ps != null)
             {
                 ps.Stop();
             }
 
-            // Disable the checkpoint GameObject (or just the collider and particle system)
-            gameObject.SetActive(false); // Disables the entire GameObject
-            // Alternatively, you can disable just the collider and particle system:
-            // GetComponent<Collider>().enabled = false;
-            // particleSystem.gameObject.SetActive(false);
-
+            //notify the RaceManager that this checkpoint has been activated
+            // and send this gameobject and its audio listener for the cancellation effect.
+            raceManager.ActivateCheckpoint(gameObject, audioSource);
             Debug.Log("Checkpoint activated and particle system stopped.");
         }
     }

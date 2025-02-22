@@ -37,7 +37,7 @@ public class RestartBarrier : MonoBehaviour
             }
 
             //reset the player's orientation
-            mainCamera.forcedOrientation(xRotation, yRotation);
+            mainCamera.ForcedOrientation(xRotation, yRotation);
 
             //restart the race
             if (raceManager != null)

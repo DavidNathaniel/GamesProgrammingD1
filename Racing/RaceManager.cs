@@ -1,10 +1,12 @@
 using UnityEngine;
+using System.Collections;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 
 public class RaceManager : MonoBehaviour
 {
-    // UI elements
+    // UI 
     [Header("Text Elements")]
     public TMP_Text timerText;
 
@@ -16,14 +18,18 @@ public class RaceManager : MonoBehaviour
     public bool isTutorial = false;
     public float finishTime;
 
-    // Array to store all checkpoint GameObjects
+    //array to store all checkpoint GameObjects
     [Header("Race Points")]
     public GameObject startLine;
-    public GameObject[] checkpoints;
     public GameObject finishLine;
+    public GameObject[] checkpoints;
+
+    [Header("Audio Sources")]
+    public AudioSource startLineAudio;
+    public AudioSource finishLineAudio;
 
     // Checkpoints
-    private int totalCheckpoints = 3; // hardcoded number of checkpoints
+    private int totalCheckpoints;
     private int checkpointsActivated = 0;
 
 
@@ -63,7 +69,14 @@ public class RaceManager : MonoBehaviour
             raceFinished = false;
             raceTime = 0f;
             checkpointsActivated = 0;
-            
+
+            //trigger sound effect
+            if (startLineAudio != null && !startLineAudio.isPlaying)
+            {
+                startLineAudio.Play();
+                StartCoroutine(DisableObjectAfterSound(startLineAudio.clip.length, startLine)); // disable gameobject AFTER sound has finished playing
+            }
+
             //activate the finish line and each checkpoints particle systems
             StartCheckpointParticleSystems();// this should be in its own method.
             Debug.Log("Race started!");
@@ -100,13 +113,13 @@ public class RaceManager : MonoBehaviour
         finishLine.SetActive(true);
         if (finishps != null && !finishps.isPlaying)
         {
-            finishps.Play(); // Start the particle system
+            finishps.Play(); //start the particle system
         }
 
         Debug.Log("Animations started!");
     }
 
-    public void ActivateCheckpoint()
+    public void ActivateCheckpoint(GameObject checkpoint, AudioSource checkpointAudio)
     {
         checkpointsActivated++;
         Debug.Log("Checkpoint activated! Total: " + checkpointsActivated);
@@ -115,19 +128,32 @@ public class RaceManager : MonoBehaviour
         {
             Debug.Log("All checkpoints activated! Proceed to finish line.");
         }
+
+        //trigger sound effect
+        if (checkpointAudio != null && !checkpointAudio.isPlaying)
+        {
+            checkpointAudio.Play();
+            StartCoroutine(DisableObjectAfterSound(checkpointAudio.clip.length, checkpoint)); // disable gameobject AFTER sound has finished playing
+        }
     }
 
     public void FinishRace()
     {
         if (raceStarted && checkpointsActivated >= totalCheckpoints)
         {
+            //trigger sound effect
+            if (finishLineAudio != null && !finishLineAudio.isPlaying)
+            {
+                finishLineAudio.Play();
+                StartCoroutine(DisableObjectAfterSound(finishLineAudio.clip.length, finishLine)); // disable gameobject AFTER sound has finished playing
+            }
+
             if (raceTime <= finishTime)
             {
                 raceFinished = true;
                 Debug.Log("Race finished! Time: " + raceTime.ToString("F3"));
 
-                //something in here about the game state needing to update - the colour of the tutorial goes green once you have completed that stage.
-                //need to check if we are in the tutorial or not, or rather need to determine which scene we are in and dependant on that will depend on what happens next.
+                // If in the tutorial, allow the player to access the next levels
                 if (isTutorial)
                 {
                     // Save that the tutorial is completed
@@ -136,9 +162,9 @@ public class RaceManager : MonoBehaviour
                     Debug.Log("Tutorial completed! Level 1 unlocked.");
                 }
 
+                //stop the particle effects
                 ParticleSystem finishps = finishLine.GetComponent<ParticleSystem>();
-                finishps.Stop(); // may have to do some wiggling here for repeat use of the race.
-                                 //finishLine.SetActive(false); // kills it too fast
+                finishps.Stop(); 
             }
             else
             {
@@ -162,7 +188,7 @@ public class RaceManager : MonoBehaviour
 
         UpdateTimerDisplay(); //to be 0f
 
-        // Reset all checkpoints
+        //reset all checkpoints
         foreach (GameObject checkpoint in checkpoints)
         {
             checkpoint.SetActive(false); // Reactivate the checkpoint
@@ -181,14 +207,20 @@ public class RaceManager : MonoBehaviour
         }
 
         //reset finishline
-        finishLine.SetActive(false);
         ParticleSystem finishps = finishLine.GetComponent<ParticleSystem>();
         if (finishps != null)
         {
             Debug.Log("play the finishline anim");
-            //finishps.Stop();
             finishps.Stop(); // stop the particle system
         }
         Debug.Log("Race reset!");
+    }
+    private IEnumerator DisableObjectAfterSound(float delay, GameObject gameObject)
+    {
+        //wait for the duration of the sound clip
+        yield return new WaitForSeconds(delay);
+
+        //Then disable the GameObject...
+        gameObject.SetActive(false);
     }
 }
