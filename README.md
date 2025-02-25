@@ -1,5 +1,6 @@
 ### Links to tutorial page
 + [Path planning and flocking AI features took influence from](https://learn.unity.com/tutorial/moving-as-one?uv=2021.3&projectId=5e0bb649edbc2a00260e5de3)
++ [Used to develop skills to create project](https://learn.unity.com/pathway/unity-essentials)
 
 ### Links to asset packages used in this project from Unity Asset Store
 + [for bird agent textures/prefabs](https://assetstore.unity.com/packages/3d/props/3d-birds-prototype-pack-150502)
