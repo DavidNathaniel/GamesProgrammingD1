@@ -216,22 +216,18 @@ public class PlayerMovementRB : MonoBehaviour
         // calculate movement direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        // on slope
-        if (OnSlope() && !exitingSlope)
-        {
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
-
-            if (rb.linearVelocity.y > 0)
-                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
-        }
-
         // on ground
-        else if (grounded)
+        if (grounded)
+        {
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        }
 
         // in air
         else if (!grounded)
+        {
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+        }
+            
 
         // turn gravity off while on slope
         rb.useGravity = !OnSlope();
@@ -310,10 +306,5 @@ public class PlayerMovementRB : MonoBehaviour
         }
 
         return false;
-    }
-
-    private Vector3 GetSlopeMoveDirection() // deprecated code here, no longer interested in using slope mechanics for D1
-    {
-        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 }
