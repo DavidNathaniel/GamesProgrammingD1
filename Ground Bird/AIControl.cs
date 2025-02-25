@@ -9,8 +9,8 @@ public class AIControl : MonoBehaviour {
     NavMeshAgent agent;
     Animator anim;
     float speedMult;
-    float detectionRadius = 15.0f;
-    float fleeRadius = 5.0f;
+    float detectionRadius = 6.0f; //how far it can detect
+    float fleeRadius = 5.0f; //how far it goes
 
     void Start() {
 

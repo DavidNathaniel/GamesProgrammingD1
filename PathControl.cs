@@ -12,7 +12,7 @@ public class PathControl : MonoBehaviour {
     void Start() {
 
         agent = GetComponent<NavMeshAgent>();
-        goalLocations = GameObject.FindGameObjectsWithTag("walk goal");
+        goalLocations = GameObject.FindGameObjectsWithTag("walkgoal");
         int i = Random.Range(0, goalLocations.Length);
         agent.SetDestination(goalLocations[i].transform.position);
         float sm = Random.Range(0.5f, 2.0f);
