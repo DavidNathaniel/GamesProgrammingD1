@@ -53,11 +53,16 @@ public class RaceManager : MonoBehaviour
         }
     }
 
-    void UpdateTimerDisplay()
+    //update timer text object with the current race attempt time
+    void UpdateTimerDisplay(string displayText="")
     {
-        if (timerText != null)
+        if (raceFinished)
         {
-            timerText.text = "Time: " + raceTime.ToString("F3"); // Display time with 2 decimal places
+            timerText.text = "Final Time\n" + raceTime.ToString("F3") + "\n"+ displayText; 
+        }
+        else if (timerText != null)
+        {
+            timerText.text = "Time\n" + raceTime.ToString("F3"); // 'F3' should be 3 decimal places
         }
     }
 
@@ -153,13 +158,18 @@ public class RaceManager : MonoBehaviour
                 raceFinished = true;
                 Debug.Log("Race finished! Time: " + raceTime.ToString("F3"));
 
-                // If in the tutorial, allow the player to access the next levels
+                //If in the tutorial, allow the player to access the next levels
                 if (isTutorial)
                 {
                     // Save that the tutorial is completed
                     PlayerPrefs.SetInt("TutorialCompleted", 1);
                     PlayerPrefs.Save(); // Save the data is immediately
                     Debug.Log("Tutorial completed! Level 1 unlocked.");
+                    UpdateTimerDisplay("Tutorial completed! Level 1 unlocked.");
+                }
+                else
+                {
+                    UpdateTimerDisplay("Level 1 completed!");
                 }
 
                 //stop the particle effects

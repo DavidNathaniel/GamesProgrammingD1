@@ -5,47 +5,91 @@ using UnityEngine.SceneManagement;
 
 public class TitleScreenManager : MonoBehaviour
 {
-    // Public variables to assign scene names in the Inspector
     public string tutorialSceneName;
     public string advancedLevelSceneName;
     public Button levelbutton;
+    public Button toggleProgressButton;
     public GameObject tutorialText;
+    public GameObject tutorialProgressionText;
+    
 
     void Start()
     {
-        // Unlock and show the cursor when the TitleScreen loads
+        //unlock and show the cursor when the Titlescreen loads
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
-        // Check if the tutorial is completed to enable access to different levels.
+        // Update the UI based on the current progress
+        UpdateUI();
+
+        // Add a listener to the toggle button
+        toggleProgressButton.onClick.AddListener(ToggleProgress);
+    }
+
+    private void UpdateUI()
+    {
+        //check if the tutorial is completed to enable access to different levels.
         if (PlayerPrefs.GetInt("TutorialCompleted", 0) == 1)
         {
-            levelbutton.interactable = true; // Enable the Level1 button
+            levelbutton.interactable = true; //enable the Level1 button
             tutorialText.SetActive(false);
+            tutorialProgressionText.SetActive(false);
         }
         else
         {
-            levelbutton.interactable = false; // Disable the Level1 button
+            levelbutton.interactable = false; //disable Level1 button
+            tutorialText.SetActive(true);
+            tutorialProgressionText.SetActive(true);
         }
     }
 
+    //change the player preferences for demo purposes.
+    public void ToggleProgress()
+    {
+        // Toggle the tutorial completion status
+        int tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0);
+        if (tutorialCompleted == 1)
+        {
+            PlayerPrefs.SetInt("TutorialCompleted", 0); // Reset progress
+            Debug.Log("Progress reset. Tutorial must be completed again.");
+        }
+        else
+        {
+            PlayerPrefs.SetInt("TutorialCompleted", 1); // Set progress to completed
+            Debug.Log("Progress set to completed. Level 1 unlocked.");
+        }
 
-    // Method to load the tutorial scene
+        // Save the changes
+        PlayerPrefs.Save();
+
+        // Update the UI to reflect the new progress state
+        UpdateUI();
+    }
+
+
+    //method to load the tutorial scene
     public void LoadTutorial()
     {
         Debug.Log("Loading Tutorial Scene: " + tutorialSceneName);
         SceneManager.LoadScene(tutorialSceneName, LoadSceneMode.Single);
     }
 
-    // Method to load the advanced level scene
+    //method to load the advanced level (level1) scene
     public void LoadAdvancedLevel()
     {
         Debug.Log("Loading Level1 Scene: " + advancedLevelSceneName);
         SceneManager.LoadScene(advancedLevelSceneName, LoadSceneMode.Single);
     }
 
-    // Method to exit game
+    //method to exit game
     public void ExitApplication()
+    {
+        Debug.Log("Exit called...");
+        Application.Quit();
+    }
+
+    //method to reset player prefs (for demo/debugging)
+    public void ResetPlayerPrefs()
     {
         Debug.Log("Exit called...");
         Application.Quit();
