@@ -33,6 +33,8 @@ public class RestartBarrier : MonoBehaviour
                 playerRigidbody.linearVelocity = Vector3.zero;
                 playerRigidbody.angularVelocity = Vector3.zero;
                 pm.resetSpeed = true;
+                pm.isResetPlayer = true;
+                //eitehr reset player automatically in statemanager with a new bool, or update state manually  using .pm.resetPlayer();
                 //also set player's movespeed to 0 - resetting their wallrun speed or smth. //pm.resetWallRunSpeed //by overriding the mathf.lerp coroutine.
             }
 

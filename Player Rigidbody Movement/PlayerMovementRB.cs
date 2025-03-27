@@ -16,8 +16,10 @@ public class PlayerMovementRB : MonoBehaviour
     public float wallrunSpeed;
     public float maxWallRunSpeed;
     //for increasing (and decreasing) speed slowly
+    public float speedDifference = 4f;
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
+    
 
 
     public float groundDrag;
@@ -74,6 +76,7 @@ public class PlayerMovementRB : MonoBehaviour
     public bool wallrunning;
     public bool sticky;
     public bool resetSpeed = false;
+    public bool isResetPlayer = false;
 
     private void Start()
     {
@@ -149,6 +152,12 @@ public class PlayerMovementRB : MonoBehaviour
 
         else*/ //don't think we should use this rn 
         // wallrunning
+        if (isResetPlayer)
+        {
+            Debug.LogError("Resetting player....");
+            ResetPlayer();
+        }
+
         if (wallrunning)
         {
             state = MovementState.wallrunning;
@@ -160,7 +169,7 @@ public class PlayerMovementRB : MonoBehaviour
             else
             {
 
-                Debug.Log("desired: " + desiredMoveSpeed + "moveS: " + moveSpeed);
+                //Debug.Log("desired: " + desiredMoveSpeed + "moveS: " + moveSpeed);
                 desiredMoveSpeed = moveSpeed;
                 //moveSpeed = wallrunSpeed; // multiplier?
             }
@@ -194,9 +203,12 @@ public class PlayerMovementRB : MonoBehaviour
         }
 
         //change the speed slowly if the difference is huge.
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > speedDifference && moveSpeed != 0)
         {
 
+            Debug.LogError("start coroutine");
+            //Debug.Log("moves " + moveSpeed + "= desired: " + desiredMoveSpeed + " lastDesired: " + lastDesiredMoveSpeed);
+            
             //smoothly transition? // has to be a new speed multiplier for us to use - max wall run speed has to be here.
             //Debug.Log("definitely starting hte coroutine......");
             StopAllCoroutines();
@@ -204,6 +216,7 @@ public class PlayerMovementRB : MonoBehaviour
         }
         else
         {
+            //Debug.Log("coroutine...moves " +moveSpeed+ "= desired: " +desiredMoveSpeed);
             moveSpeed = desiredMoveSpeed;
             //wallRunText.textToDisplay = $"moveSpeed: {moveSpeed}";
         }
@@ -268,16 +281,18 @@ public class PlayerMovementRB : MonoBehaviour
             moveSpeed = Mathf.Lerp(startSpeed, desiredMoveSpeed, time / difference);
             time += Time.deltaTime;
             wallRunText.textToDisplay = $"Wall Run Move Speed: {moveSpeed}";
-            if (resetSpeed)
+            
+            if (resetSpeed) // resetSpeed is only called by Restart barrier 
             {
-                Debug.Log("reset moveSpeed");
-                moveSpeed = 0;
+                Debug.Log("reset players moveSpeed");
                 resetSpeed = false;
+                ResetPlayer(); // hard reset all desired speed values
                 break;
             }
             yield return null;
         }
 
+        //the break above breaks out of the while loop, not the method. The below is still executed
         moveSpeed = desiredMoveSpeed;
         Debug.Log("new move speed = " + moveSpeed);
     }
@@ -295,6 +310,27 @@ public class PlayerMovementRB : MonoBehaviour
         readyToJump = true;
 
         exitingSlope = false;
+    }
+
+    //reset all speed and momentum values
+    private void ResetPlayer()
+    {
+        //set movement state to walking
+        state = MovementState.walking;
+
+        //set movement speed to walk speed
+        moveSpeed = 0f;
+        lastDesiredMoveSpeed = 0f;
+        desiredMoveSpeed = 0f;
+        
+        //set wall run speed to 0
+        wallrunning = false;
+        wallrunSpeed = 0f;
+
+        isResetPlayer = false;
+
+        Debug.LogError("player speed reset.");
+        //could need to reset player velocity too...
     }
 
     private bool OnSlope() // deprecated code here, no longer interested in using slope mechanics for D1
